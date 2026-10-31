@@ -14,7 +14,7 @@
 
   <!-- Local developer overrides for the settings above; ignored by Git (*.user).
        Copy the first PropertyGroup of this file into Directory.Build.props.user
-       and fill in your local paths there. Running setup.py writes it for you. -->
+       and fill in your local paths there. -->
   <Import Project="$(MSBuildThisFileDirectory)Directory.Build.props.user"
           Condition="Exists('$(MSBuildThisFileDirectory)Directory.Build.props.user')" />
 
