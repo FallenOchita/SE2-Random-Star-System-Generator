@@ -12,5 +12,5 @@
     <Directory>src/RSSG.Core</Directory>
   </SourceDirectories>
   <!-- Update Commit to the reviewed release commit before submitting to PluginHub-SE2. -->
-  <Commit>232c4c5a4e5fd2ad7c48d7ac1601e4c329e9a967</Commit>
+  <Commit>0228424bcc4385afbd9084c03b1d05862c036d9c</Commit>
 </PluginData>
