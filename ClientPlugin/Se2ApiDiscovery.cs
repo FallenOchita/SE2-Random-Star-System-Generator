@@ -8,8 +8,8 @@ namespace RSSG.ClientPlugin;
 
 internal static class Se2ApiDiscovery
 {
-    private static readonly string[] CandidateAssemblies = { "SpaceEngineers2", "Game2.Game", "Game2.Simulation", "Game2.Client" };
-    private static readonly string[] CandidateTypeNames = { "GameAppComponent", "WorldSessionComponent", "WorldSeedProviderSessionComponent", "VoxelPlanetsSessionComponent", "MyGuiScreenBase", "MyGuiSandbox", "MyGuiControlSlider", "MyGuiControlCheckbox", "MyGuiControlButton" };
+    private static readonly string[] CandidateAssemblies = { "SpaceEngineers2", "Game2.Game", "Game2.Simulation", "Game2.Client", "VRage.Game.Client", "VRage.Core.Game", "VRage.Client" };
+    private static readonly string[] CandidateTypeNames = { "GameAppComponent", "WorldSessionComponent", "WorldSeedProviderSessionComponent", "VoxelPlanetsSessionComponent", "MyGuiScreenBase", "MyGuiSandbox", "MyGuiControlSlider", "MyGuiControlCheckbox", "MyGuiControlButton", "MyGuiControlLabel", "MyGuiControlCombobox", "MyGuiControlSeparator" };
     private const BindingFlags DeclaredMembers = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
 
     public static void DumpCandidates()
