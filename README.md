@@ -1,29 +1,32 @@
 # SE2 Random Star System Generator (RSSG)
 
-A deterministic procedural star-system generation core for Space Engineers 2.
+A deterministic procedural star-system generator and Pulsar client-plugin project for Space Engineers 2.
 
-> **Status: v0.1 prototype.** The procedural generation engine and host integration contract are committed. This is not yet an installable SE2 plugin: a real Pulsar/VRAGE3 adapter, world-generation hook, menu UI, and live multiplayer replication still need to be implemented and tested against the current game SDK.
+> **Status: v0.2 development scaffold.** The .NET generation engine is separate from the game runtime. A Pulsar-compatible SE2 client-plugin entry point and PluginHub manifest draft are now included. The plugin configuration action currently produces a generation preview in the game log. It does **not** yet create or replace a live world.
 
-## Features in the prototype
+## Current features
 - Repeatable seed-based generation using a project-owned SplitMix64 PRNG.
 - Single-star and binary-star systems.
 - Configurable planet, moon, and asteroid-belt counts.
 - Star and planet classes, orbital distances, approximate radius, gravity, atmosphere, and temperature data.
 - Generated system names and stable object IDs.
 - Generation-setting validation.
-- Console smoke tests and a GitHub Actions build workflow.
-- Host-neutral integration contract for automatic new-world generation and an in-game menu action.
-- Server-authority check and a client-publishing boundary in the host contract.
+- Console smoke tests and GitHub Actions build workflow.
+- Pulsar client-plugin entry point targeting the SE2 Modern runtime.
+- Plugin configuration action that logs a generated preview.
+- Draft PluginHub-SE2 registration manifest.
 
 ## Repository layout
 ```
-src/RSSG.Core/       Game-independent generation engine and data models
-src/RSSG.Host/       Host integration contract (no invented game API calls)
-tests/RSSG.Core.Tests/  Dependency-free executable smoke tests
-.github/workflows/   Build workflow
+src/RSSG.Core/          Game-independent generation engine and data models
+src/RSSG.Host/          Host-neutral integration contract (not a live game adapter)
+ClientPlugin/           Pulsar client-plugin entry point
+tests/RSSG.Core.Tests/   Dependency-free executable smoke tests
+.github/workflows/       Core build workflow
+RSSG.ClientPlugin.xml    PluginHub-SE2 manifest draft
 ```
 
-## Build
+## Build the generator core
 Requires the .NET 10 SDK.
 
 ```bash
@@ -31,36 +34,38 @@ dotnet build RSSG.sln --configuration Release
 dotnet run --project tests/RSSG.Core.Tests/RSSG.Core.Tests.csproj --configuration Release
 ```
 
-## Quick example
-```csharp
-using RSSG.Core;
+## Build the SE2 client plugin
+Requirements:
+- Space Engineers 2 installed, with the `Game2` folder available.
+- .NET 10 SDK.
+- Pulsar 2.2.0 or newer, using its SE2 `Modern` runtime.
 
-var generator = new StarSystemGenerator();
-var settings = GenerationSettings.Default with
-{
-    Seed = 481516,
-    MinPlanets = 4,
-    MaxPlanets = 8,
-    AllowBinaryStars = true
-};
-GeneratedStarSystem system = generator.Generate(settings);
-Console.WriteLine($"{system.Name}: {system.Planets.Count} planets");
-```
+Open `RSSG.ClientPlugin.sln` in Visual Studio or Rider. Set the local `Game2` and optional `Pulsar` paths in an untracked `Directory.Build.props.user` file (see the Pulsar client plugin template documentation). Build with `dotnet build RSSG.ClientPlugin.sln`.
 
-The same seed and settings produce the same generated output for a given generator version. If a future algorithm change alters output, increment `CurrentGeneratorVersion`.
+The plugin can also be loaded from a Pulsar development folder. The manifest draft is not yet ready for PluginHub submission: update its `Commit` field to the reviewed release commit first.
 
-## Planned SE2 integration
-1. Verify the current Pulsar plugin template, supported target framework, and runtime lifecycle.
-2. Implement the automatic new-world generation hook using verified SE2 APIs.
-3. Add an in-game configuration/generation menu using supported UI hooks.
-4. Make the server authoritative and replicate the generated system data to clients.
-5. Test planet/voxel/entity creation in a real SE2 test world and package the compatible plugin.
+## Current plugin behavior
+When loaded, RSSG registers as a Pulsar client plugin. Its plugin configuration action generates a deterministic sample system and writes the star, planet, orbit, and moon summary to the game log. This is a development preview, not an in-game world-generation menu.
 
-## Important limitations
-- This prototype generates star-system data; it does not spawn VRAGE3 planets, terrain, voxel asteroids, skyboxes, or physics entities.
-- Multiplayer compatibility is not yet implemented or tested. The host contract only establishes the intended server-authoritative boundary.
-- No SE1 APIs are targeted.
-- Do not install this repository as a game plugin yet.
+## Important SE2 limitations
+- SE2 currently has no dedicated server; the available Pulsar SE2 plugin model is client-side. Do not describe this as a dedicated-server plugin.
+- The plugin does not yet hook new-world creation, alter world-generation settings, spawn planets/voxels, or synchronize a generated system across multiplayer clients.
+- The host interface in `src/RSSG.Host` is an architectural contract only. It is not connected to SE2 runtime APIs.
+- A real world-generation adapter requires inspection and testing against the exact current SE2 game assemblies. Do not guess Harmony patch targets or private method signatures.
+- In-game scripting/Programmable Blocks are not part of this plugin.
+
+## Roadmap
+1. Verify the SE2 world creation flow and find a stable, supported runtime extension point.
+2. Implement a safe preview/configuration screen in the game UI.
+3. Hook generation into new-world creation only after the exact game method and data model are verified.
+4. Determine how a player-hosted multiplayer world distributes world-generation results to joining clients.
+5. Add actual planet/voxel creation, save/load persistence, and multiplayer regression tests.
+
+## References
+- [Official SE2 modding guides](https://2.spaceengineersgame.com/modding-guides/)
+- [Pulsar](https://github.com/SpaceGT/Pulsar)
+- [SE2 client plugin template](https://github.com/CometWorks/client2-plugin-template)
+- [SE2 plugin development guide](https://cometworks.github.io/plugin-dev/se2/)
 
 ## License
-This repository currently has the GNU GPL-3.0 license selected on GitHub. See [LICENSE](LICENSE).
+MIT.
