@@ -49,7 +49,7 @@ Requirements:
 
 Open `RSSG.ClientPlugin.sln` in Visual Studio or Rider. Set the local `Game2` and optional `Pulsar` paths in an untracked `Directory.Build.props.user` file (see the Pulsar client plugin template documentation). Build with `dotnet build RSSG.ClientPlugin.sln`.
 
-The plugin can also be loaded from a Pulsar development folder. The manifest draft is not yet ready for PluginHub submission: update its `Commit` field to the reviewed release commit first.
+The plugin can also be loaded from a Pulsar development folder. `RSSG.ClientPlugin.xml` now pins the PluginHub descriptor to the generator source revision and explicitly sets `Hidden` to `false`. This makes the descriptor ready to include in a PluginHub-SE2 submission, but it does not publish the plugin by itself: the descriptor still needs to be added under `Plugins/` in the official `StarCpt/PluginHub-SE2` repository through a pull request and approved by its maintainers.
 
 ## Current plugin behavior
 When loaded, RSSG registers as a Pulsar client plugin and loads player settings from `%LocalAppData%/RSSG/generation-settings.json` on Windows (the platform local application data path is used on other systems). The configuration action generates a preview using the loaded settings and writes the star, planet, orbit, moon, belt, and GPS preference summary to the game log. The settings include planet/moon/belt count ranges, first-planet orbit, orbital spacing, moon orbital distances, belt width, and GPS marker preference.
