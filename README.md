@@ -7,7 +7,10 @@ A deterministic procedural star-system generator and Pulsar client-plugin projec
 ## Current features
 - Repeatable seed-based generation using a project-owned SplitMix64 PRNG.
 - Single-star and binary-star systems.
-- Configurable planet, moon, and asteroid-belt counts.\n- Configurable first-planet orbit, spacing between planetary orbits, moon orbital-distance range, and asteroid-belt width.\n- GPS marker preference stored in generation settings (actual in-world GPS marker creation is not yet connected).\n- JSON settings persistence under the user local application data directory.
+- Configurable planet, moon, and asteroid-belt counts.
+- Configurable first-planet orbit, spacing between planetary orbits, moon orbital-distance range, and asteroid-belt width.
+- GPS marker preference stored in generation settings (actual in-world GPS marker creation is not yet connected).
+- JSON settings persistence under the user local application data directory.
 - Star and planet classes, orbital distances, approximate radius, gravity, atmosphere, and temperature data.
 - Generated system names and stable object IDs.
 - Generation-setting validation.
@@ -49,7 +52,9 @@ Open `RSSG.ClientPlugin.sln` in Visual Studio or Rider. Set the local `Game2` an
 The plugin can also be loaded from a Pulsar development folder. The manifest draft is not yet ready for PluginHub submission: update its `Commit` field to the reviewed release commit first.
 
 ## Current plugin behavior
-When loaded, RSSG registers as a Pulsar client plugin and loads player settings from `%LocalAppData%/RSSG/generation-settings.json` on Windows (the platform local application data path is used on other systems). The configuration action generates a preview using the loaded settings and writes the star, planet, orbit, moon, belt, and GPS preference summary to the game log. The settings include planet/moon/belt count ranges, first-planet orbit, orbital spacing, moon orbital distances, belt width, and GPS marker preference.\n\nThe requested native in-game sliders are not yet wired. The plugin now also performs read-only discovery of the SE2 GUI screen, slider, checkbox, and button types alongside the four world-generation types. This avoids guessing constructor signatures or UI stack calls; once the runtime log identifies the exact GUI types and signatures, the sliders and toggles can be implemented against the correct 4.0.0.3165 API.
+When loaded, RSSG registers as a Pulsar client plugin and loads player settings from `%LocalAppData%/RSSG/generation-settings.json` on Windows (the platform local application data path is used on other systems). The configuration action generates a preview using the loaded settings and writes the star, planet, orbit, moon, belt, and GPS preference summary to the game log. The settings include planet/moon/belt count ranges, first-planet orbit, orbital spacing, moon orbital distances, belt width, and GPS marker preference.
+
+The requested native in-game sliders are not yet wired. The plugin now also performs read-only discovery of the SE2 GUI screen, slider, checkbox, and button types alongside the four world-generation types. This avoids guessing constructor signatures or UI stack calls; once the runtime log identifies the exact GUI types and signatures, the sliders and toggles can be implemented against the correct 4.0.0.3165 API.
 
 ## Persistence groundwork
 `SystemSnapshotCodec` serializes a generated system into a versioned JSON document with the target SE2 build. Deserialization checks the schema version, expected game build, and basic system structure. This is groundwork for save/load persistence only: it does not yet write into SE2's save format or create world entities. The future game adapter must decide where and when the snapshot is stored.
