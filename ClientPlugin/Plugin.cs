@@ -62,7 +62,7 @@ public sealed class Plugin : IPlugin
         {
             if (!File.Exists(SettingsPath))
             {
-                CurrentSettings = GenerationSettings.Default;
+                SaveSettings(GenerationSettings.Default);
                 return;
             }
 
