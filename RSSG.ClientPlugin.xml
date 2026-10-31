@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<PluginData xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="GitHubPlugin">
+  <Id>9B7FBE4A-9B72-4F3E-AD3D-1B5B9F6D18E7</Id>
+  <RepoId>FallenOchita/SE2-Random-Star-System-Generator</RepoId>
+  <FriendlyName>Random Star System Generator</FriendlyName>
+  <Author>FallenOchita</Author>
+  <Tooltip>Seeded procedural star-system generation preview for Space Engineers 2.</Tooltip>
+  <Description>Generates deterministic star-system previews with configurable star, planet, moon, and asteroid-belt data. Actual world creation and multiplayer synchronization are not yet implemented.</Description>
+  <SourceDirectories>
+    <Directory>ClientPlugin</Directory>
+    <Directory>src/RSSG.Core</Directory>
+  </SourceDirectories>
+  <!-- Update Commit to the reviewed release commit before submitting to PluginHub-SE2. -->
+  <Commit>pending-release-commit</Commit>
+</PluginData>
