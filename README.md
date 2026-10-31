@@ -2,12 +2,12 @@
 
 A deterministic procedural star-system generator and Pulsar client-plugin project for Space Engineers 2.
 
-> **Status: v0.2 development scaffold. Target game build: SE2 4.0.0.3165.** The .NET generation engine is separate from the game runtime. A Pulsar-compatible SE2 client-plugin entry point and PluginHub manifest draft are included. The plugin configuration action currently produces a generation preview in the game log. It does **not** yet create or replace a live world.
+> **Status: v0.3 development scaffold. Target game build: SE2 4.0.0.3165.** The .NET generation engine is separate from the game runtime. A Pulsar-compatible SE2 client-plugin entry point and PluginHub manifest draft are included. The plugin configuration action currently produces a generation preview in the game log. It does **not** yet create or replace a live world. The generation settings model and persistence are implemented; native slider UI is still pending GUI API verification.
 
 ## Current features
 - Repeatable seed-based generation using a project-owned SplitMix64 PRNG.
 - Single-star and binary-star systems.
-- Configurable planet, moon, and asteroid-belt counts.
+- Configurable planet, moon, and asteroid-belt counts.\n- Configurable first-planet orbit, spacing between planetary orbits, moon orbital-distance range, and asteroid-belt width.\n- GPS marker preference stored in generation settings (actual in-world GPS marker creation is not yet connected).\n- JSON settings persistence under the user local application data directory.
 - Star and planet classes, orbital distances, approximate radius, gravity, atmosphere, and temperature data.
 - Generated system names and stable object IDs.
 - Generation-setting validation.
@@ -49,7 +49,7 @@ Open `RSSG.ClientPlugin.sln` in Visual Studio or Rider. Set the local `Game2` an
 The plugin can also be loaded from a Pulsar development folder. The manifest draft is not yet ready for PluginHub submission: update its `Commit` field to the reviewed release commit first.
 
 ## Current plugin behavior
-When loaded, RSSG registers as a Pulsar client plugin. Its plugin configuration action generates a deterministic sample system and writes the star, planet, orbit, and moon summary to the game log. This is a development preview, not an in-game world-generation menu.
+When loaded, RSSG registers as a Pulsar client plugin and loads player settings from `%LocalAppData%/RSSG/generation-settings.json` on Windows (the platform local application data path is used on other systems). The configuration action generates a preview using the loaded settings and writes the star, planet, orbit, moon, belt, and GPS preference summary to the game log. The settings include planet/moon/belt count ranges, first-planet orbit, orbital spacing, moon orbital distances, belt width, and GPS marker preference.\n\nThe requested native in-game sliders are not yet wired. The plugin now also performs read-only discovery of the SE2 GUI screen, slider, checkbox, and button types alongside the four world-generation types. This avoids guessing constructor signatures or UI stack calls; once the runtime log identifies the exact GUI types and signatures, the sliders and toggles can be implemented against the correct 4.0.0.3165 API.
 
 ## Persistence groundwork
 `SystemSnapshotCodec` serializes a generated system into a versioned JSON document with the target SE2 build. Deserialization checks the schema version, expected game build, and basic system structure. This is groundwork for save/load persistence only: it does not yet write into SE2's save format or create world entities. The future game adapter must decide where and when the snapshot is stored.
@@ -68,7 +68,7 @@ See [the assembly reconnaissance notes](docs/SE2-4.0.0.3165-assembly-notes.md).
 
 ## Important SE2 limitations
 - The current Pulsar SE2 plugin model is client-side. Do not describe this as a dedicated-server plugin.
-- The plugin does not yet hook new-world creation, alter world-generation settings, spawn planets/voxels, or synchronize a generated system across multiplayer clients.
+- The plugin does not yet hook new-world creation, alter live world-generation settings, spawn planets/voxels, create in-world GPS markers, or synchronize a generated system across multiplayer clients.
 - The host interface in `src/RSSG.Host` is an architectural contract only. It is not connected to SE2 runtime APIs.
 - A real world-generation adapter requires exact method-signature and IL verification against the target game build. Do not guess Harmony patch targets or private method signatures.
 - In-game scripting/Programmable Blocks are not part of this plugin.
@@ -76,7 +76,7 @@ See [the assembly reconnaissance notes](docs/SE2-4.0.0.3165-assembly-notes.md).
 ## Roadmap
 1. Complete managed metadata and IL inspection for the candidate new-world/session lifecycle.
 2. Verify a stable extension point and determine whether generation configuration can be injected before procedural world setup.
-3. Implement a safe preview/configuration screen in the game UI.
+3. Use the runtime GUI discovery output to implement discrete sliders and GPS marker toggles in the native SE2 settings screen.
 4. Hook generation into new-world creation only after the exact game method and data model are verified.
 5. Determine how a player-hosted multiplayer world distributes world-generation results to joining clients.
 6. Add actual planet/voxel creation, save/load persistence, and multiplayer regression tests.
