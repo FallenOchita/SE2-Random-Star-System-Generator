@@ -10,6 +10,7 @@ namespace RSSG.ClientPlugin;
 public sealed class Plugin : IPlugin
 {
     public const string Name = "RSSG";
+    public const string SupportedGameBuild = "4.0.0.3165";
     public static Plugin Instance { get; private set; }
 
     public Plugin()
@@ -22,6 +23,7 @@ public sealed class Plugin : IPlugin
         harmony.PatchAll(Assembly.GetExecutingAssembly());
 
         Log.Default.WriteLine($"[{Name}] Random Star System Generator loaded.");
+        Log.Default.WriteLine($"[{Name}] Target SE2 build: {SupportedGameBuild}.");
         Log.Default.WriteLine($"[{Name}] Runtime generation preview is available from the plugin configuration action.");
     }
 
