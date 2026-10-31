@@ -32,6 +32,7 @@ internal sealed class PreviewSettingsScreenViewModel : ScreenViewModel
         {
             Text = "PREVIEW ONLY — this plugin does not create or modify live game worlds yet.",
             FontWeight = FontWeight.Bold,
+            Foreground = Brushes.White,
             TextWrapping = TextWrapping.Wrap,
             Margin = new Thickness(0, 0, 0, 12)
         });
@@ -44,14 +45,14 @@ internal sealed class PreviewSettingsScreenViewModel : ScreenViewModel
         AddField(host, "Maximum moons per planet", settings.MaxMoonsPerPlanet.ToString(), value => fields.MaxMoons = value);
         AddField(host, "Minimum asteroid belts", settings.MinAsteroidBelts.ToString(), value => fields.MinBelts = value);
         AddField(host, "Maximum asteroid belts", settings.MaxAsteroidBelts.ToString(), value => fields.MaxBelts = value);
-        AddField(host, "First orbit minimum (AU)", settings.FirstOrbitMinAu.ToString("0.##"), value => fields.FirstOrbitMin = value);
-        AddField(host, "First orbit maximum (AU)", settings.FirstOrbitMaxAu.ToString("0.##"), value => fields.FirstOrbitMax = value);
-        AddField(host, "Orbit spacing minimum", settings.OrbitalSpacingMinMultiplier.ToString("0.##"), value => fields.SpacingMin = value);
-        AddField(host, "Orbit spacing maximum", settings.OrbitalSpacingMaxMultiplier.ToString("0.##"), value => fields.SpacingMax = value);
-        AddField(host, "Moon orbit minimum (km)", settings.MoonOrbitMinKm.ToString("0"), value => fields.MoonOrbitMin = value);
-        AddField(host, "Moon orbit maximum (km)", settings.MoonOrbitMaxKm.ToString("0"), value => fields.MoonOrbitMax = value);
-        AddField(host, "Belt width minimum (AU)", settings.AsteroidBeltWidthMinAu.ToString("0.##"), value => fields.BeltWidthMin = value);
-        AddField(host, "Belt width maximum (AU)", settings.AsteroidBeltWidthMaxAu.ToString("0.##"), value => fields.BeltWidthMax = value);
+        AddField(host, "First orbit minimum (AU)", settings.FirstOrbitMinAu.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture), value => fields.FirstOrbitMin = value);
+        AddField(host, "First orbit maximum (AU)", settings.FirstOrbitMaxAu.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture), value => fields.FirstOrbitMax = value);
+        AddField(host, "Orbit spacing minimum", settings.OrbitalSpacingMinMultiplier.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture), value => fields.SpacingMin = value);
+        AddField(host, "Orbit spacing maximum", settings.OrbitalSpacingMaxMultiplier.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture), value => fields.SpacingMax = value);
+        AddField(host, "Moon orbit minimum (km)", settings.MoonOrbitMinKm.ToString("0", System.Globalization.CultureInfo.InvariantCulture), value => fields.MoonOrbitMin = value);
+        AddField(host, "Moon orbit maximum (km)", settings.MoonOrbitMaxKm.ToString("0", System.Globalization.CultureInfo.InvariantCulture), value => fields.MoonOrbitMax = value);
+        AddField(host, "Belt width minimum (AU)", settings.AsteroidBeltWidthMinAu.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture), value => fields.BeltWidthMin = value);
+        AddField(host, "Belt width maximum (AU)", settings.AsteroidBeltWidthMaxAu.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture), value => fields.BeltWidthMax = value);
 
         var binaryStars = AddCheck(host, "Allow binary stars", settings.AllowBinaryStars);
         var generateMoons = AddCheck(host, "Generate moons", settings.GenerateMoons);
@@ -61,6 +62,7 @@ internal sealed class PreviewSettingsScreenViewModel : ScreenViewModel
         var result = new TextBlock
         {
             Text = "Change settings, then select Generate Preview.",
+            Foreground = Brushes.White,
             TextWrapping = TextWrapping.Wrap,
             Margin = new Thickness(0, 12, 0, 8)
         };
@@ -129,7 +131,7 @@ internal sealed class PreviewSettingsScreenViewModel : ScreenViewModel
     private static void AddField(StackPanel host, string label, string initialValue, Action<string> assign)
     {
         var row = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 10, Margin = new Thickness(0, 3) };
-        row.Children.Add(new TextBlock { Text = label, Width = 245, VerticalAlignment = VerticalAlignment.Center });
+        row.Children.Add(new TextBlock { Text = label, Width = 245, Foreground = Brushes.White, VerticalAlignment = VerticalAlignment.Center });
         var input = new TextBox { Text = initialValue, Width = 130 };
         input.TextChanged += (_, _) => assign(input.Text ?? string.Empty);
         assign(initialValue);
@@ -139,7 +141,7 @@ internal sealed class PreviewSettingsScreenViewModel : ScreenViewModel
 
     private static CheckBox AddCheck(StackPanel host, string label, bool initialValue)
     {
-        var check = new CheckBox { Content = label, IsChecked = initialValue, Margin = new Thickness(0, 3) };
+        var check = new CheckBox { Content = label, IsChecked = initialValue, Foreground = Brushes.White, Margin = new Thickness(0, 3) };
         host.Children.Add(check);
         return check;
     }
