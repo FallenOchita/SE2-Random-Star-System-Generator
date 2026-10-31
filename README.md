@@ -11,6 +11,8 @@ A deterministic procedural star-system generator and Pulsar client-plugin projec
 - Star and planet classes, orbital distances, approximate radius, gravity, atmosphere, and temperature data.
 - Generated system names and stable object IDs.
 - Generation-setting validation.
+- Versioned JSON snapshot codec for generated-system data, including an SE2 build compatibility check.
+- Core smoke tests for deterministic generation and snapshot round-tripping.
 - Console smoke tests and GitHub Actions build workflow.
 - Pulsar client-plugin entry point targeting the SE2 Modern runtime.
 - Startup log identifies the target SE2 build (4.0.0.3165).
@@ -48,6 +50,9 @@ The plugin can also be loaded from a Pulsar development folder. The manifest dra
 
 ## Current plugin behavior
 When loaded, RSSG registers as a Pulsar client plugin. Its plugin configuration action generates a deterministic sample system and writes the star, planet, orbit, and moon summary to the game log. This is a development preview, not an in-game world-generation menu.
+
+## Persistence groundwork
+`SystemSnapshotCodec` serializes a generated system into a versioned JSON document with the target SE2 build. Deserialization checks the schema version, expected game build, and basic system structure. This is groundwork for save/load persistence only: it does not yet write into SE2's save format or create world entities. The future game adapter must decide where and when the snapshot is stored.
 
 ## Assembly reconnaissance for 4.0.0.3165
 The user-supplied assembly set was inspected for managed metadata/string evidence. It exposes candidate lifecycle and procedural-generation types, including:
