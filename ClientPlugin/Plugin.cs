@@ -24,11 +24,11 @@ public sealed class Plugin : IPlugin
 
         Log.Default.WriteLine($"[{Name}] Random Star System Generator loaded.");
         Log.Default.WriteLine($"[{Name}] Target SE2 build: {SupportedGameBuild}.");
+        Log.Default.WriteLine($"[{Name}] Running read-only lifecycle API discovery for the four candidate types.");
+        Se2ApiDiscovery.DumpCandidates();
         Log.Default.WriteLine($"[{Name}] Runtime generation preview is available from the plugin configuration action.");
     }
 
-    // Pulsar invokes this method from the plugin's configuration button.
-    // Until a verified SE2 world-generation hook is implemented, this is a safe preview only.
     public void OpenConfigDialog()
     {
         try
