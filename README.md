@@ -84,4 +84,4 @@ The preview is data-only. The GPS option is a saved preference and does not curr
 
 ## License
 
-GPL-3.0-or-later. See [LICENSE](LICENSE).
+GPL-3.0. See [LICENSE](LICENSE).
