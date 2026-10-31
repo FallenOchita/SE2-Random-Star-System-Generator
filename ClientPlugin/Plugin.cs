@@ -16,13 +16,19 @@ public sealed class Plugin : IPlugin
     public static Plugin Instance { get; private set; }
     public static GenerationSettings CurrentSettings { get; private set; } = GenerationSettings.Default;
 
-    private static readonly string SettingsDirectory = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "RSSG");
-    private static readonly string SettingsPath = Path.Combine(SettingsDirectory, "generation-settings.json");
+#pragma warning disable CS0649 // Pulsar injects this delegate before constructing the plugin.
+    private static Func<string, string, string> GetConfigPath;
+#pragma warning restore CS0649
+
+    // Pulsar's per-plugin data directory respects the game's -appData location.
+    public string DataDir { get; private set; } = GetConfigPath(Name, null);
+    private static string SettingsPath { get; set; }
 
     public Plugin()
     {
         Instance = this;
+        SettingsPath = Path.Combine(DataDir, "generation-settings.json");
+
 #if DEBUG
         Harmony.DEBUG = true;
 #endif
@@ -32,27 +38,31 @@ public sealed class Plugin : IPlugin
         LoadSettings();
         Log.Default.WriteLine($"[{Name}] Random Star System Generator loaded.");
         Log.Default.WriteLine($"[{Name}] Target SE2 build: {SupportedGameBuild}.");
-        Log.Default.WriteLine($"[{Name}] Running read-only lifecycle and GUI API discovery.");
-        Se2ApiDiscovery.DumpCandidates();
-        Log.Default.WriteLine($"[{Name}] Current generation settings loaded. Open plugin Settings for configuration.");
+        Log.Default.WriteLine($"[{Name}] Settings directory: {DataDir}");
+        Log.Default.WriteLine($"[{Name}] Open plugin Settings to configure options and generate a preview.");
     }
 
-    // Pulsar invokes this from the plugin Settings action.
-    // The actual native SE2 screen is added after the GUI type signatures are verified.
+    // Invoked by Pulsar via reflection when the player clicks the plugin Settings action.
     public void OpenConfigDialog()
     {
         try
         {
-            var system = new StarSystemGenerator().Generate(CurrentSettings);
-            Log.Default.WriteLine($"[{Name}] Preview: {system.Name}");
-            Log.Default.WriteLine($"[{Name}] Stars: {system.Stars.Count}; planets: {system.Planets.Count}; asteroid belts: {system.AsteroidBelts.Count}");
-            Log.Default.WriteLine($"[{Name}] GPS marker preference: {(CurrentSettings.ShowGpsMarkers ? "enabled" : "disabled")}; in-world GPS creation is not connected yet.");
-            foreach (var planet in system.Planets)
-                Log.Default.WriteLine($"[{Name}] {planet.Name}: {planet.Class}, orbit {planet.OrbitalDistanceAu:F2} AU, moons {planet.Moons.Count}");
+            var sharedUi = GameAccess.GetSharedUI();
+            if (sharedUi == null)
+            {
+                Log.Default.WriteLine(LogSeverity.Warning, $"[{Name}] SharedUIComponent is not available yet.");
+                return;
+            }
+
+            var viewModel = new PreviewSettingsScreenViewModel(
+                "Random Star System Generator",
+                panel => PreviewSettingsScreenViewModel.Populate(panel));
+
+            sharedUi.CreateScreen<PreviewSettingsScreen>(viewModel, showCursor: true);
         }
         catch (Exception e)
         {
-            Log.Default.WriteLine(LogSeverity.Error, $"[{Name}] Generation preview failed: {e}");
+            Log.Default.WriteLine(LogSeverity.Error, $"[{Name}] Could not open settings screen: {e}");
         }
     }
 
@@ -83,10 +93,13 @@ public sealed class Plugin : IPlugin
     {
         ArgumentNullException.ThrowIfNull(settings);
         settings.Validate();
-        Directory.CreateDirectory(SettingsDirectory);
+        Directory.CreateDirectory(Path.GetDirectoryName(SettingsPath));
         string temporaryPath = SettingsPath + ".tmp";
         File.WriteAllText(temporaryPath, JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true }));
         File.Move(temporaryPath, SettingsPath, true);
         CurrentSettings = settings;
     }
+
+    internal static GeneratedStarSystem GeneratePreview(GenerationSettings settings) =>
+        new StarSystemGenerator().Generate(settings);
 }
