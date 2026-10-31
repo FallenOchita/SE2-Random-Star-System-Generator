@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 namespace RSSG.Core;
 public enum StarClass { RedDwarf, OrangeDwarf, YellowDwarf, WhiteStar, BlueGiant }
 public enum PlanetClass { Terrestrial, Desert, Ocean, Ice, Volcanic, GasGiant, IceGiant }
