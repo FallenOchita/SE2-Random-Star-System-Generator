@@ -1,0 +1,10 @@
+namespace RSSG.Core;
+public enum StarClass { RedDwarf, OrangeDwarf, YellowDwarf, WhiteStar, BlueGiant }
+public enum PlanetClass { Terrestrial, Desert, Ocean, Ice, Volcanic, GasGiant, IceGiant }
+public enum GenerationMode { AutomaticNewWorld, InGameMenu }
+public sealed record GenerationSettings { public int Seed { get; init; } = 20261030; public int MinPlanets { get; init; } = 3; public int MaxPlanets { get; init; } = 8; public int MinMoonsPerPlanet { get; init; } = 0; public int MaxMoonsPerPlanet { get; init; } = 3; public int MinAsteroidBelts { get; init; } = 0; public int MaxAsteroidBelts { get; init; } = 2; public bool AllowBinaryStars { get; init; } = true; public bool GenerateMoons { get; init; } = true; public bool GenerateAsteroidBelts { get; init; } = true; public static GenerationSettings Default => new(); public void Validate() { if (MinPlanets < 1 || MaxPlanets < MinPlanets || MaxPlanets > 32) throw new ArgumentOutOfRangeException(nameof(MaxPlanets)); if (MinMoonsPerPlanet < 0 || MaxMoonsPerPlanet < MinMoonsPerPlanet || MaxMoonsPerPlanet > 12) throw new ArgumentOutOfRangeException(nameof(MaxMoonsPerPlanet)); if (MinAsteroidBelts < 0 || MaxAsteroidBelts < MinAsteroidBelts || MaxAsteroidBelts > 8) throw new ArgumentOutOfRangeException(nameof(MaxAsteroidBelts)); } }
+public sealed record Star(string Id,string Name,StarClass Class,double SolarMasses,double RadiusSolar,double TemperatureKelvin);
+public sealed record Moon(string Id,string Name,double RadiusKm,double OrbitalDistanceKm);
+public sealed record Planet(string Id,string Name,PlanetClass Class,double RadiusKm,double GravityG,bool HasAtmosphere,double MeanTemperatureC,double OrbitalDistanceAu,IReadOnlyList<Moon> Moons);
+public sealed record AsteroidBelt(string Id,double InnerRadiusAu,double OuterRadiusAu,int EstimatedMajorAsteroids);
+public sealed record GeneratedStarSystem(int Seed,int GeneratorVersion,string Name,IReadOnlyList<Star> Stars,IReadOnlyList<Planet> Planets,IReadOnlyList<AsteroidBelt> AsteroidBelts);
